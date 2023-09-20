@@ -1,6 +1,4 @@
 #include "main.h"
-#include "api.h"
-#include "auton.h"
 
 //base
 #define lf_port 1

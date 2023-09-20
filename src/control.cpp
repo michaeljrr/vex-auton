@@ -1,7 +1,23 @@
+#include "control.h"
 #include "main.h"
-#include "odom.h"
-#include "global.hpp"
-#include "api.h"
+
+//base
+#define lf_port 1
+#define lt_port 20
+#define lb_port 19
+#define rf_port 10
+#define rt_port 13
+#define rb_port 15
+
+//flipper
+#define fs_port 9
+#define fr_port 8
+#define flipperrot_port 16
+
+//cata
+#define lc_port 3
+#define rc_port 14
+#define catarot_port 18
 
 #define DEFAULT_KP 0.17
 #define DEFAULT_KI 0
@@ -14,11 +30,32 @@
 #define DISTANCE_LEEWAY 15
 #define MAX_POW 100
 
+const double baseWidth = 11;
+double X = 0, Y = 0, prevEncdL = 0, prevEncdR = 0, prevAngle = 0;
+double angle = 0, lastResetAngle = 0;
+double inPerDeg = 2.75/360;
+double torad = 3.14159265358979 / 180;
+double pi = 3.14159265358979;
+double half_pi = 3.14159265358979 / 2;
+double encdL = 0;
+double encdR = 0;
+
 double targEncdL = 0, targEncdR = 0;
 double errorEncdL = 0, errorEncdR = 0;
 double powerL = 0, powerR = 0;
 double targPowerL = 0, targPowerR = 0;
 double kP = DEFAULT_KP, kD = DEFAULT_KD, kI = DEFAULT_KI;
+
+#define PI      3.14159265358979323846264338328
+#define halfPI  1.57079632679489661923132169164
+#define twoPI	  6.28318530717958647692528676656
+/**
+ * angle conversion from radians to degrees and vice versa
+ * angleDeg = angle * toDeg
+ * angle = angleDeg * toRad
+ */
+#define toDeg   57.2957795130823208767981548141
+#define toRad   0.0174532925199432957692369076849
 
 bool turnMode = false, pauseBase = false;
 
@@ -67,7 +104,7 @@ void baseMove(double x, double y){
 void baseTurn(double a, double kp, double ki, double kd){
   // wait(100, msec);
   printf("baseTurn(%.2f, %.2f, %.2f)\n", a, kp, kd);
-  double error = a*toRad - angle;
+  double error = a*torad - angle;
   double diff = error*baseWidth/inPerDeg/2;
 
   targEncdL += diff;
@@ -83,7 +120,7 @@ void baseTurn(double a){
 
 void baseTurnRelative(double a, double p, double i, double d){
 
-  double diff = a*toRad*baseWidth/inPerDeg/2;
+  double diff = a*torad*baseWidth/inPerDeg/2;
   targEncdL += diff;
   targEncdR += -diff;
 
@@ -99,15 +136,15 @@ void baseTurnRelative(double a){
 void baseTurn(double x, double y, double p, double i, double d, bool inverted){
   printf("deltas: %.2f, %.2f\n", x, X);
 	double targAngle = atan2((x-X), (y-Y));
-  printf("Turn to angle: %.2f\n", targAngle / toRad);
-	if(inverted) targAngle -= halfPI;
+  printf("Turn to angle: %.2f\n", targAngle / torad);
+	if(inverted) targAngle -= half_pi;
   // double diff = (targAngle - angle + lastResetAngle)*baseWidth/inPerDeg/2;
   // targEncdL += diff;
   // targEncdR += -diff;
   // kP = p;
   // kD = d;
   double diffAngle = boundRad(targAngle-angle);
-  if(diffAngle > PI) diffAngle -= twoPI;
+  if(diffAngle > pi) diffAngle -= (2* pi);
   targAngle = angle + diffAngle;
   printf("diffANgle: %.1f\n", diffAngle*toDeg);
   baseTurn(targAngle*toDeg, p, i, d);

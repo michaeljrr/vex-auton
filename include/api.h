@@ -76,12 +76,7 @@
 #include "pros/vision.hpp"
 #include "pros/link.hpp"
 
-#include "main.h"
-#include "odom.h"
-#include "control.h"
-#include "global.hpp"
-#include "math.h"
-#include "auton.h"
+
 #endif
 
 #endif  // _PROS_API_H_

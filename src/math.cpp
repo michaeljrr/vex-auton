@@ -1,5 +1,7 @@
+#include "math.h"
 #include "main.h"
-#include "api.h"
+
+double pi = 3.14159;
 
 double boundRad(double rad){
   double res = fmod(rad, 2*pi);
