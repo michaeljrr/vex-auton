@@ -49,10 +49,68 @@ void blue10() {
 }
 
 void red10() {
+
+  //turn 180
+    //lf_wheel.move(60);
+    //rf_wheel.move(60);
+    //pros::delay(1000);
+
+    //exactly one tile forward
+    //lf_wheel.move(60);
+    //rf_wheel.move(-60);
+    //pros::delay(1100);
+    
   	pros::Motor lf_wheel (lf_port);
     pros::Motor rf_wheel (rf_port);
-    lf_wheel.move_relative(100, 10);
-    rf_wheel.move_relative(100, 10);
+
+    //exactly one tile forward
+    lf_wheel.move(60);
+    rf_wheel.move(-60);
+    pros::delay(1100);
+
+    lf_wheel.brake();
+    rf_wheel.brake();
+    pros::delay(300);
+
+    lf_wheel.move(60);
+    rf_wheel.move(-60);
+    pros::delay(1000);
+
+    lf_wheel.brake();
+    rf_wheel.brake();
+    pros::delay(300);
+
+
+    //turn left
+    lf_wheel.move(-60);
+    rf_wheel.move(-60);
+    pros::delay(500);
+
+    lf_wheel.brake();
+    rf_wheel.brake();
+    pros::delay(300);
+
+    lf_wheel.move(60);
+    rf_wheel.move(-60);
+    pros::delay(1100);
+
+    lf_wheel.brake();
+    rf_wheel.brake();
+    pros::delay(300);
+
+    lf_wheel.move(60);
+    rf_wheel.move(-60);
+    pros::delay(1100);
+
+    lf_wheel.brake();
+    rf_wheel.brake();
+    pros::delay(300);
+
+    //while(!((rf_wheel.get_position() < 105) && (rf_wheel.get_position() > 95))){
+    //  pros::delay(10);
+    }
+
+
     //resetCoords(0, 0, -58.3);
     //baseMove(32);
     //waitBase(1500);
@@ -93,4 +151,3 @@ void red10() {
   pros::delay(50);
   pros::delay(200);
   */
-}

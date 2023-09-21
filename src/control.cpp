@@ -204,8 +204,8 @@ int Control(){
       powerL = abscap(powerL, MAX_POW);
       powerR = abscap(powerR, MAX_POW);
 
-      lf_wheel.move_velocity(powerL);
-      lf_wheel.move_velocity(powerL);
+      lf_wheel.move(powerL);
+      lf_wheel.move(powerL);
     }
     pros::delay(dT);
   }
