@@ -1,5 +1,14 @@
 #include "odom.h"
+#include "sensors.h"
 #include "main.h"
+
+extern const double baseWidth;
+extern double X, Y, prevEncdL, prevEncdR, prevAngle;
+extern double angle, lastResetAngle;
+extern double inPerDeg;
+extern double torad;
+extern double encdL;
+extern double encdR;
 
 //base
 #define lf_port 1
@@ -19,30 +28,19 @@
 #define rc_port 14
 #define catarot_port 18
 
-const double baseWidth = 11;
-double X = 0, Y = 0, prevEncdL = 0, prevEncdR = 0, prevAngle = 0;
-double angle = 0, lastResetAngle = 0;
-double inPerDeg = 2.75/360;
-double pi = 3.14159265358979;
-double encdL = 0;
-double encdR = 0;
 
-#define PI      3.14159265358979323846264338328
-#define halfPI  1.57079632679489661923132169164
-#define twoPI	  6.28318530717958647692528676656
 /**
  * angle conversion from radians to degrees and vice versa
  * angleDeg = angle * toDeg
  * angle = angleDeg * toRad
  */
-#define toDeg   57.2957795130823208767981548141
-#define toRad   0.0174532925199432957692369076849
+
 
 void setCoords(double x, double y, double a){
     X = x;
     Y = y;
-    lastResetAngle = a*toRad;
-    angle = a*toRad;
+    lastResetAngle = a*torad;
+    angle = a*torad;
 }
 
 int Odometry(){

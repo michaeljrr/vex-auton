@@ -2,9 +2,9 @@
 #define _PROS_MATH_H_
 
 /** refer to mathUtils.cpp for function documentation */
-double boundRad(double rad);
-double boundDeg(double deg);
-double abscap(double x, double abscap);
-double min(double a, double b);
-int sign(double x);
+extern double boundRad(double rad);
+extern double boundDeg(double deg);
+extern double abscap(double x, double abscap);
+extern double min(double a, double b);
+extern int sign(double x);
 #endif

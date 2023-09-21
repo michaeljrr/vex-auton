@@ -39,6 +39,7 @@
 #include "control.h"
 #include "math.h"
 #include "auton.h"
+#include "sensors.h"
 /**
  * You should add more #includes here
  */

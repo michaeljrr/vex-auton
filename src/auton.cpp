@@ -1,23 +1,6 @@
 #include "auton.h"
 #include "main.h"
-
-//base
-#define lf_port 1
-#define lt_port 20
-#define lb_port 19
-#define rf_port 10
-#define rt_port 13
-#define rb_port 15
-
-//flipper
-#define fs_port 9
-#define fr_port 8
-#define flipperrot_port 16
-
-//cata
-#define lc_port 3
-#define rc_port 14
-#define catarot_port 18
+#include "sensors.h"
 
 void blue10() {
     resetCoords(0, 0, -58.3);
@@ -68,11 +51,11 @@ void blue10() {
 void red10() {
   	pros::Motor lf_wheel (lf_port);
     pros::Motor rf_wheel (rf_port);
-    
-    lf_wheel.move(10);
-    resetCoords(0, 0, -58.3);
-    baseMove(32);
-    waitBase(1500);
+    lf_wheel.move_relative(100, 10);
+    rf_wheel.move_relative(100, 10);
+    //resetCoords(0, 0, -58.3);
+    //baseMove(32);
+    //waitBase(1500);
     /*
   resetCoords(0, 0, -58.3);
   baseMove(32);
