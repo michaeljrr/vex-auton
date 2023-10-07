@@ -11,7 +11,7 @@ extern double encdL;
 extern double encdR;
 
 //base
-#define lf_port 1
+#define lf_port 2
 #define lt_port 20
 #define lb_port 19
 #define rf_port 10
@@ -50,8 +50,8 @@ int Odometry(){
 
     while (true){
         //get encoder units
-        encdL = lf_wheel.get_encoder_units();
-        encdR = rf_wheel.get_encoder_units();
+        encdL = lf_wheel.get_position();
+        encdR = rf_wheel.get_position();
 
         //
         double encdChangeL = (encdL / 25.4)*inPerDeg;
@@ -78,7 +78,7 @@ int Odometry(){
     prevAngle = angle;
     pros::delay(5);
   }
-  return 0;
+  //return 0;
 }
 
 void resetPrevEncd() {

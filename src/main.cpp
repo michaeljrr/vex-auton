@@ -1,6 +1,11 @@
 #include "main.h"
+#include <string.h>
+#include <math.h>
 
 
+pros::ADIEncoder quadencoder ('E', 'F');
+
+void odom();
 /**
  * A callback function for LLEMU's center button.
  *
@@ -17,7 +22,15 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
+ void initialize() {
+	pros::lcd::initialize();
+
+	//while(1) {
+		//std::cout << "test\n";
+		//pros::delay(100);
+	//}
+	//pros::Task fkingodometry(Odometry); 
+	//pros::Task fkingcontrol(Control);
 }
 
 /**
@@ -36,7 +49,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -67,5 +82,33 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	red10();
+	pros::Task odomo(odom);
+}
+
+void odom() {
+	using namespace pros;
+	Motor lf_wheel (2);
+	Motor rf_wheel (10); 
+	while(1) {
+        std::string encdL = std::to_string(lf_wheel.get_position());
+        std::string encdR = std::to_string(rf_wheel.get_position());
+
+		std::string quadencdunits = std::to_string(quadencoder.get_value());
+
+		pros::lcd::set_text(1,encdL + "    " + encdR + "    " + quadencdunits);
+		std::cout << encdL << "    " << encdR << "    " << quadencdunits << std::endl;
+		pros::delay(100);
+
+
+
+		double leftencd = lf_wheel.get_position();
+        double rightencd = rf_wheel.get_position();
+
+        double leftdistance = (leftencd / 25.4) * (2.75/360);
+        double rightdistance = (rightencd / 25.4) * (2.75/360);
+
+		double angle = ((leftencd - rightencd) / 25.4)* ((2.75/360)/13.7795);
+
+		red10();
+	}
 }

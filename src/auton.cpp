@@ -2,10 +2,12 @@
 #include "main.h"
 #include "sensors.h"
 
+using namespace pros;
+
 void blue10() {
-    resetCoords(0, 0, -58.3);
-    baseMove(32);
-    waitBase(1500);
+  Motor lf_wheel (1);
+  Motor rf_wheel (rf_port);
+  baseMove(40);
       /*
   resetCoords(0, 0, -58.3);
   baseMove(32);
@@ -60,7 +62,7 @@ void red10() {
     //rf_wheel.move(-60);
     //pros::delay(1100);
     
-  	pros::Motor lf_wheel (lf_port);
+  	pros::Motor lf_wheel (2);
     pros::Motor rf_wheel (rf_port);
 
     //exactly one tile forward
