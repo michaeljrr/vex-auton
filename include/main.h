@@ -37,7 +37,6 @@
 #include "api.h"
 #include "odom.h"
 #include "control.h"
-#include "math.h"
 #include "auton.h"
 #include "sensors.h"
 /**

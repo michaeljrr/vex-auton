@@ -1,13 +1,14 @@
 #include "sensors.h"
 
 
-extern double baseWidth = 11;
+extern double dbaseline = 11;
 extern double X = 0, Y = 0, prevEncdL = 0, prevEncdR = 0, prevAngle = 0;
 extern double angle = 0, lastResetAngle = 0;
 extern double inPerDeg = 2.75/360;
 extern double torad = 3.14159265358979 / 180;
 extern double encdL = 0;
 extern double encdR = 0;
+extern double theta = 3.14159265358979 / 2;
 
 extern double targEncdL = 0, targEncdR = 0;
 extern double errorEncdL = 0, errorEncdR = 0;

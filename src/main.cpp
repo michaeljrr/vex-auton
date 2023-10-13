@@ -4,8 +4,16 @@
 
 
 pros::ADIEncoder quadencoder ('E', 'F');
+extern double X;
+extern double Y;
+extern double theta;
+extern double encdL;
+extern double encdR;
+extern double torad;
+extern double dleft;
+extern double dright;
 
-void odom();
+void printer();
 /**
  * A callback function for LLEMU's center button.
  *
@@ -82,33 +90,54 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Task odomo(odom);
+	pros::Task printing(printer);
+	pros::Task odom(Odometry);
 }
 
-void odom() {
+std::string prevGuessPos;
+
+void printer() {
 	using namespace pros;
-	Motor lf_wheel (2);
-	Motor rf_wheel (10); 
+	Motor lf_wheel (1);
+	Motor rf_wheel (9); 
 	while(1) {
-        std::string encdL = std::to_string(lf_wheel.get_position());
-        std::string encdR = std::to_string(rf_wheel.get_position());
+		//lf_wheel.move(100);
+		//rf_wheel.move(100);
+        std::string pX = std::to_string(X);
+        std::string pY = std::to_string(Y);
+		std::string pTheta = std::to_string(theta / torad);
+		int guessPos =  guessMovement(dleft, dright);
+		std::string nguessPos;
+		//short (and heinous) converter for guessPos:
+		if(guessPos == 1){nguessPos = "Moving in an arc position to the left";}
+		else if(guessPos == 2){nguessPos = "Moving in an arc position to the right";}
+		else if(guessPos == 3){nguessPos = "Moving in a circle clockwise";}
+		else if(guessPos == 4){nguessPos = "Moving in a circle anticlockwise";}
+		else if(guessPos == 5){nguessPos = "Only right wheel moving";}
+		else if(guessPos == 6){nguessPos = "Only left wheel moving";}
+		else if(guessPos == 7){nguessPos = "Robot not moving, stationary";}
+		else if(guessPos == 8){nguessPos = "Moving forward";}
+		else if(guessPos == 9){nguessPos = "Moving backward";}
+		//std::string p = std::to_string(rf_wheel.get_position());
+        
 
-		std::string quadencdunits = std::to_string(quadencoder.get_value());
+		//std::string rightwheel = std::to_string(rf_wheel.get_position());
+		//std::string leftwheel = std::to_string(lf_wheel.get_position());
+		//lcd::set_text(1,"test");
+		//pros::lcd::set_text(1,print1 + "    " + print2);
+		//pros::lcd::set_text(3,print3 + "    " + print4);
 
-		pros::lcd::set_text(1,encdL + "    " + encdR + "    " + quadencdunits);
-		std::cout << encdL << "    " << encdR << "    " << quadencdunits << std::endl;
-		pros::delay(100);
+		//lcd::set_text(1,print1 + "   " + print2 + "   " + print3);
+		//printf("X: %f           Y: %f           Theta: %f              Position Guess: %s", pX, pY, pTheta, nguessPos);
+		
+		//std::cout << rightwheel << "   " << leftwheel << std::endl;
+		//std::cout << encdL << "    "<< encdR << std::endl;
 
-
-
-		double leftencd = lf_wheel.get_position();
-        double rightencd = rf_wheel.get_position();
-
-        double leftdistance = (leftencd / 25.4) * (2.75/360);
-        double rightdistance = (rightencd / 25.4) * (2.75/360);
-
-		double angle = ((leftencd - rightencd) / 25.4)* ((2.75/360)/13.7795);
-
-		red10();
+		
+		if(prevGuessPos != nguessPos){std::cout << nguessPos <<std::endl;}
+		prevGuessPos = nguessPos;
+		printf("X: %f          Y: %f        Theta: %f          \n", X, Y, theta/torad);
+		
+		delay(500);
 	}
 }
