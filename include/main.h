@@ -38,7 +38,7 @@
 #include "odom.h"
 #include "control.h"
 #include "auton.h"
-#include "sensors.h"
+#include "constants.h"
 /**
  * You should add more #includes here
  */
@@ -70,6 +70,7 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+void printer();
 #ifdef __cplusplus
 }
 #endif

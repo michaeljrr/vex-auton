@@ -3,7 +3,7 @@
 #include <math.h>
 
 
-pros::ADIEncoder quadencoder ('E', 'F');
+
 extern double X;
 extern double Y;
 extern double theta;
@@ -12,8 +12,15 @@ extern double encdR;
 extern double torad;
 extern double dleft;
 extern double dright;
+extern double errdisp;
+extern double errortheta;
+extern double targettheta;
+extern bool turnmode;
+extern bool drivemode;
+extern bool stationary;
+extern double totalthetaerr;
+extern double prevthetaerr;
 
-void printer();
 /**
  * A callback function for LLEMU's center button.
  *
@@ -90,22 +97,40 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	blue10();
 	pros::Task printing(printer);
 	pros::Task odom(Odometry);
+	pros::Task pid(Control);
 }
 
 std::string prevGuessPos;
 
 void printer() {
 	using namespace pros;
+	//print formats
+	//std::string string_name = std::to_string(rf_wheel.get_position());
+	//lcd::set_text(1,print1 + "   " + print2 + "   " + print3);
+	//printf("X: %f           Y: %f           Theta: %f              Position Guess: %s", pX, pY, pTheta, nguessPos);
+	//std::cout << rightwheel << "   " << leftwheel << std::endl;
 	Motor lf_wheel (1);
 	Motor rf_wheel (9); 
+	pros::ADIEncoder quadL ('E', 'F');
+  	pros::ADIEncoder quadR ('G', 'H');
 	while(1) {
-		//lf_wheel.move(100);
-		//rf_wheel.move(100);
         std::string pX = std::to_string(X);
         std::string pY = std::to_string(Y);
 		std::string pTheta = std::to_string(theta / torad);
+		std::string leftquadval = std::to_string(quadL.get_value());
+		std::string rightquadval = std::to_string(quadR.get_value());
+
+		printf("X: %f     Y: %f    Theta: %f      targettheta: %f    errortheta: %f    turnmode: %d total: %d  der: %d\n",\
+		 X, Y, theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr, (prevthetaerr));
+		
+		delay(100);
+	}
+}
+
+/*
 		int guessPos =  guessMovement(dleft, dright);
 		std::string nguessPos;
 		//short (and heinous) converter for guessPos:
@@ -118,26 +143,7 @@ void printer() {
 		else if(guessPos == 7){nguessPos = "Robot not moving, stationary";}
 		else if(guessPos == 8){nguessPos = "Moving forward";}
 		else if(guessPos == 9){nguessPos = "Moving backward";}
-		//std::string p = std::to_string(rf_wheel.get_position());
-        
 
-		//std::string rightwheel = std::to_string(rf_wheel.get_position());
-		//std::string leftwheel = std::to_string(lf_wheel.get_position());
-		//lcd::set_text(1,"test");
-		//pros::lcd::set_text(1,print1 + "    " + print2);
-		//pros::lcd::set_text(3,print3 + "    " + print4);
-
-		//lcd::set_text(1,print1 + "   " + print2 + "   " + print3);
-		//printf("X: %f           Y: %f           Theta: %f              Position Guess: %s", pX, pY, pTheta, nguessPos);
-		
-		//std::cout << rightwheel << "   " << leftwheel << std::endl;
-		//std::cout << encdL << "    "<< encdR << std::endl;
-
-		
 		if(prevGuessPos != nguessPos){std::cout << nguessPos <<std::endl;}
 		prevGuessPos = nguessPos;
-		printf("X: %f          Y: %f        Theta: %f          \n", X, Y, theta/torad);
-		
-		delay(500);
-	}
-}
+*/

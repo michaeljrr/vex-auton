@@ -5,7 +5,7 @@
 #define lf_port 1
 #define lt_port 20
 #define lb_port 19
-#define rf_port 10
+#define rf_port 9
 #define rt_port 13
 #define rb_port 15
 

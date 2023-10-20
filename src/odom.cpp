@@ -1,79 +1,75 @@
 #include "odom.h"
-#include "sensors.h"
+#include "constants.h"
 #include "main.h"
 
+//calling constants
 extern const double dbaseline;
+extern const double wheelrad;
 extern double X, Y, prevEncdL, prevEncdR, prevAngle;
 extern double angle, lastResetAngle;
 extern double inPerDeg;
 extern double torad;
 extern double encdL;
 extern double encdR;
+extern double theta;
+extern double pi;
+extern bool resetcoords;
+
 extern double dleft = 0;
 extern double dright = 0;
 double dcenter = 0;
-extern double theta;
 
-//base
-#define lf_port 1
-#define lt_port 20
-#define lb_port 19
-#define rf_port 9
-#define rt_port 13
-#define rb_port 15
-
-//flipper
-#define fs_port 9
-#define fr_port 8
-#define flipperrot_port 16
-
-//cata
-#define lc_port 3
-#define rc_port 14
-#define catarot_port 18
-
-
-
-void setCoords(double x, double y, double a){
-    X = x;
-    Y = y;
-    lastResetAngle = a*torad;
-    angle = a*torad;
-}
 
 int Odometry(){
   using namespace pros;
   Motor lf_wheel (lf_port);
   Motor rf_wheel (rf_port);
+  pros::ADIEncoder quadL ('C', 'D');
+  pros::ADIEncoder quadR ('G', 'H');
   
   while (true){
     //get encoder units
+    //get.position() -> 2.5 units per degree
     encdL = lf_wheel.get_position();
     encdR = rf_wheel.get_position();
 
-    double prevencdL = 0;
-    double prevencdR = 0;
+    //resets coords if true
+    if (resetcoords){
+      resetcoords = false;
+      X = 0;
+      Y = 0;
+    }
 
-    //delay(500);
-
-    if (encdL != prevencdL){
-      //get.position() -> 2.5 units per degree
+    //update X,Y,theta if there changes
+    if (encdL != 0 or encdR != 0){
       //convert encoder units to distance (in cm)
       //distance travelled = wheel arc length = radius(cm) * theta(in rad)
-      dleft = 6.985 * (encdL / 2.5) * torad;
-      dright = 6.985 * (encdR / 2.5) * torad;
+      dleft = wheelrad * (encdL / 2.5) * torad;
+      dright = -1 * wheelrad * (encdR / 2.5) * torad;
       dcenter = (dleft + dright) / 2;
 
-      //Update X, Y and theta
+      //updates X, Y and theta
       X += dcenter * cos(theta);
       Y += dcenter * sin(theta);
       theta += ((dright - dleft) / dbaseline);
-    }
 
+      //makes sure theta stays within 360 degrees for readability
+      if (theta > (2*pi)){
+        theta -= 2*pi;
+      }
+      else if (theta < (-2*pi)){
+        theta += 2*pi;
+      }
+    }
+    //resets motor encoder values
     lf_wheel.tare_position();
     rf_wheel.tare_position();
+
+    delay(50);
   }
 }
+
+
 
 int prevLeft, prevRight;
 
@@ -95,49 +91,4 @@ int guessMovement(double dleft, double dright){
   prevLeft = dleft;
   prevRight = dright;
 }
-
-void resetPrevEncd() {
-  prevEncdL = encdL;
-  prevEncdR = encdR;
-}
-
-/*
-int Odometry(){
-        pros::Motor lf_wheel (lf_port);
-        pros::Motor rf_wheel (rf_port); 
-        
-
-    while (true){
-        //get encoder units
-        encdL = lf_wheel.get_position();
-        encdR = rf_wheel.get_position();
-
-        //
-        double encdChangeL = (encdL / 25.4)*inPerDeg;
-        double encdChangeR = (encdR / 25.4)*inPerDeg;
-        angle = lastResetAngle + ((encdL - encdR) / 25.4)*inPerDeg/baseWidth; //Theta = (s2-s1)/width
-        double deltaAngle = angle - prevAngle;
-        double sumEncdChange = encdChangeL + encdChangeR;
-
-    if(deltaAngle == 0) //Cannot divide by 0
-    {
-			X += sumEncdChange/2*sin(angle);            	//Simple trigo
-			Y += sumEncdChange/2*cos(angle);
-		}
-		else                //Refer to formulas
-		{
-			double halfDeltaAngle = deltaAngle/2;
-			double strDist = (sumEncdChange/deltaAngle)*sin(halfDeltaAngle);
-			X += strDist * sin(prevAngle+halfDeltaAngle);
-			Y += strDist * cos(prevAngle+halfDeltaAngle);
-		}
-    /** update prev variables 
-    prevEncdL = encdL;
-    prevEncdR = encdR;
-    prevAngle = angle;
-    pros::delay(5);
-  }
-  //return 0;
-}
-*/
 
