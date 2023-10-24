@@ -2,12 +2,13 @@
 #define _PROS_SENSORS_H_
 
 
-#define lf_port 1
-#define lt_port 20
-#define lb_port 19
-#define rf_port 9
-#define rt_port 13
-#define rb_port 15
+#define lf_port 10
+#define lt_port 6
+#define lb_port 8
+#define rf_port 20
+#define rt_port 19
+#define rb_port 18
+#define imu_port 9
 
 //flipper
 #define fs_port 9

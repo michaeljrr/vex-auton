@@ -3,5 +3,7 @@
 
 void red10();
 void blue10();
+void pidvalues(double targleft, double targright);
+void pidmove();
 
 #endif

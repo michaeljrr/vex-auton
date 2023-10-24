@@ -2,6 +2,23 @@
 #include <string.h>
 #include <math.h>
 
+extern double X;
+extern double Y;
+extern double theta;
+extern double encdL;
+extern double encdR;
+extern double torad;
+extern double dleft;
+extern double dright;
+extern double errdisp;
+extern double errortheta;
+extern double targettheta;
+extern bool turnmode;
+extern bool drivemode;
+extern bool stationary;
+extern double totalthetaerr;
+extern double prevthetaerr;
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -20,13 +37,9 @@ void on_center_button() {
  */
  void initialize() {
 	pros::lcd::initialize();
-
-	//while(1) {
-		//std::cout << "test\n";
-		//pros::delay(100);
-	//}
-	//pros::Task fkingodometry(Odometry); 
-	//pros::Task fkingcontrol(Control);
+	//pros::Task odom(Odometry);
+	//pros::Task pid(Control);
+	pros::Task hardcode(pidmove);
 }
 
 /**
@@ -78,10 +91,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	blue10();
-	//pros::Task printing(printer);
-	pros::Task odom(Odometry);
-	pros::Task pid(Control);
+	pidvalues(2100, 2100);
+
 }
 
 std::string prevGuessPos;
