@@ -5,7 +5,7 @@
 //wheelrad (in cm) = ra
 extern const double dbaseline = 29;
 extern const double wheelrad = 5;
-extern double kP = 0.2, kD = 0, kI = 0;
+extern double kP = 2, kD = 0, kI = 0;
 
 
 //variables
@@ -25,8 +25,7 @@ extern double targPowerL = 0, targPowerR = 0;
 
 extern bool resetcoords = false;
 
-extern double totalthetaerr = 10.0;
-extern double prevthetaerr = 10.0;
+
 
 
 //constants

@@ -71,6 +71,24 @@ void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
 void printer();
+
+extern double X;
+extern double Y;
+extern double theta;
+extern double encdL;
+extern double encdR;
+extern double torad;
+extern double dleft;
+extern double dright;
+extern double errdisp;
+extern double errortheta;
+extern double targettheta;
+extern bool turnmode;
+extern bool drivemode;
+extern bool stationary;
+extern double totalthetaerr;
+extern double prevthetaerr;
+
 #ifdef __cplusplus
 }
 #endif

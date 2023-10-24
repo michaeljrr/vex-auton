@@ -2,25 +2,6 @@
 #include <string.h>
 #include <math.h>
 
-
-
-extern double X;
-extern double Y;
-extern double theta;
-extern double encdL;
-extern double encdR;
-extern double torad;
-extern double dleft;
-extern double dright;
-extern double errdisp;
-extern double errortheta;
-extern double targettheta;
-extern bool turnmode;
-extern bool drivemode;
-extern bool stationary;
-extern double totalthetaerr;
-extern double prevthetaerr;
-
 /**
  * A callback function for LLEMU's center button.
  *
@@ -98,7 +79,7 @@ void autonomous() {
  */
 void opcontrol() {
 	blue10();
-	pros::Task printing(printer);
+	//pros::Task printing(printer);
 	pros::Task odom(Odometry);
 	pros::Task pid(Control);
 }
@@ -123,8 +104,8 @@ void printer() {
 		std::string leftquadval = std::to_string(quadL.get_value());
 		std::string rightquadval = std::to_string(quadR.get_value());
 
-		printf("X: %f     Y: %f    Theta: %f      targettheta: %f    errortheta: %f    turnmode: %d total: %d  der: %d\n",\
-		 X, Y, theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr, (prevthetaerr));
+		//printf("pid:%f  Theta: %f      targettheta: %f    errortheta: %f    turnmode: %d total: %f  der: %f\n",\
+		// (-80 * errortheta) + (0.001 * totalthetaerr) + (20 * (errortheta - prevthetaerr)), theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr, ((errortheta - prevthetaerr)/torad));
 		
 		delay(100);
 	}

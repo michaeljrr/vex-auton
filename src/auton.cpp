@@ -15,7 +15,8 @@ using namespace pros;
 //pros::delay(1100);
 
 void blue10() {
-  rotateto(180);
+  rotateto(170);
+  //movecoords(0, 20);
 }
 
 void red10() {

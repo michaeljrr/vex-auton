@@ -2,38 +2,6 @@
 #include "main.h"
 #include "constants.h"
 
-extern double baseWidth;
-extern double X, Y, theta, prevEncdL, prevEncdR, prevAngle;
-extern double angle, lastResetAngle;
-extern double inPerDeg;
-extern double torad;
-extern double encdL;
-extern double encdR;
-
-extern double targetX, targetY, targettheta;
-extern double errorX, errorY, errortheta;
-extern double errdisp, preverrdisp, totalerr;
-extern double powerL, powerR;
-extern double targPowerL, targPowerR;
-extern double kP, kD , kI;
-
-extern double pi;
-extern double halfpi;
-extern double doublepi;
-
-extern double targEncdL, targEncdR;
-extern double errorEncdL, errorEncdR;
-extern double powerL, powerR;
-extern double targPowerL, targPowerR;
-extern double kP, kD, kI;
-
-extern bool turnmode = false;
-extern bool drivemode = false;
-extern bool stationarymode = false;
-
-extern double totalthetaerr;
-extern double prevthetaerr;
-
 
 //input x and y values then robot turn to that position first before moving in a straight line
 int Control(){
@@ -41,46 +9,44 @@ int Control(){
   Motor lf_wheel (lf_port);
   Motor rf_wheel (rf_port);
   while(true){
-    //check if robot needs to turn only or turn and move
-    if ((theta/torad) >= ((targettheta/torad) + 0.5) or (theta/torad) <= ((targettheta/torad) - 0.5)){
-      turnmode = true;
-    } 
-    if (targetX or targetY){
-      drivemode = true;
-    }
-    
+    //constantly check if robot needs to turn or move
+
     //rotate if turnmode=true
     if (turnmode){
-      //runs until within range of +-5 degrees of target theta
-      while ((theta/torad) >= ((targettheta/torad) + 0.5) or (theta/torad) <= ((targettheta/torad) - 0.5)){
-        if (drivemode == true){
-          targettheta = atan(errorY/errorX);
-        }
-        else{
-          errortheta = targettheta - theta;
-          //totalthetaerr += errortheta;
-        }
-        // + (0.1 * totalthetaerr) + (5 * (errortheta - prevthetaerr))
-        lf_wheel.move((-75 * errortheta));
-        rf_wheel.move((-75 * errortheta));
+      //runs until within range of +-0.5 degrees of target theta
+      while (fabs(theta - targettheta) > 0.5/torad){
+        errortheta = targettheta - theta;
+        totalthetaerr += errortheta;
 
-        //prevthetaerr = errortheta;
+        double turnder = errortheta - prevthetaerr;
+        double turnvoltage = (double) -75 * errortheta + (double) 0.001 * totalthetaerr + (double) 250 * turnder;
+     
+        lf_wheel.move(turnvoltage);
+        rf_wheel.move(turnvoltage);		
+
+        printf("turnPID:%f  theta: %f    targettheta: %f    errortheta: %f    turnmode: %d   totalerr: %f    der: %f\n",\
+		    turnvoltage, theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr/torad, turnder/torad);
+
+        prevthetaerr = errortheta;
 
         delay(2);
       }
       turnmode = false;
       errortheta = targettheta - theta;
+      prevthetaerr = 0;
+      totalthetaerr = 0;
       lf_wheel.brake();
       rf_wheel.brake();
-      delay(50);
+      delay(2);
     }
   
     //moves if drivemode=true
     if (drivemode){
-      //runs until errorX and errorY are within range of -0.2 and 0
-      while ((errorX >= 0.2 or errorX <= -0.2) and (errorY >= 0.2 or errorY <= 0.2)){
+      //runs until errorX and errorY are +-0.2cm
+      while (fabs(errorX) >= 0.2 and fabs(errorY) >= 0.2){
         errorX = targetX - X;
         errorY = targetY - Y;
+        targettheta = atan(errorY/errorX);
         errortheta = targettheta - theta;
         //checks if robot is moving off angle and corrects itself
         if ((errortheta/torad >= 5) or (errortheta/torad <= -5)){
@@ -91,21 +57,29 @@ int Control(){
         errdisp = pow((pow(errorX,2) + pow(errorY,2)), 0.5);
         //calculate total error for kI
         totalerr += errdisp;
+
+        double der = errdisp - preverrdisp;
         
+        printf("x:%f  y:%f Theta: %f errdisp: %f    totalerr: %f   turnmode:%d drivemode:%d pid:%f\n",\
+		    X, Y, theta/torad, errdisp, totalerr, turnmode, drivemode, kP * errdisp + kI * totalerr + kD * der);
+
         //move to target displacement
-        lf_wheel.move(kP * errdisp + kI * totalerr + kD * (errdisp - preverrdisp));
-        rf_wheel.move(-1 * kP * errdisp + kI * totalerr + kD * (errdisp - preverrdisp));
+        lf_wheel.move(kP * errdisp + kI * totalerr + kD * der);
+        rf_wheel.move(kP * errdisp + kI * totalerr + kD * der);
 
         //assign previous error for kD
         preverrdisp = errdisp;
 
-        delay(50);
+        delay(2);
       }
       //reset ID values after reaching
-      totalerr = 0;
-      preverrdisp = 0;
+      if (turnmode == false){
+        drivemode = false;
+        totalerr = 0;
+        preverrdisp = 0;
+      }
     }
-    delay(50);
+    delay(2);
   }
 }
 
@@ -113,6 +87,8 @@ int Control(){
 void movecoords(double x, double y){
   targetX = x;
   targetY = y;
+  errorX = targetX - X;
+  errorY = targetY - Y;
   drivemode = true;
 }
 
