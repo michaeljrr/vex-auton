@@ -155,6 +155,8 @@ void printer()
 
 		delay(100);
 	}
+
+	printf("Hello");
 }
 
 /*
