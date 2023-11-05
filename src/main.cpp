@@ -29,7 +29,8 @@ extern bool catamode = false;
  * "I was pressed!" and nothing.
  */
 
-void on_center_button() {
+void on_center_button()
+{
 }
 
 /**
@@ -38,10 +39,11 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
- void initialize() {
+void initialize()
+{
 	pros::lcd::initialize();
-	//pros::Task odom(Odometry);
-	//pros::Task pid(Control);
+	// pros::Task odom(Odometry);
+	// pros::Task pid(Control);
 	pros::Task hardcode(pidmove);
 }
 
@@ -61,8 +63,8 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-	
+void competition_initialize()
+{
 }
 
 /**
@@ -76,8 +78,8 @@ void competition_initialize() {
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {
-	
+void autonomous()
+{
 }
 
 /**
@@ -93,7 +95,8 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
+void opcontrol()
+{
 	pidvalues(950, 950, 5.2, 0);
 	pros::delay(1200);
 	resetpid = true;
@@ -116,41 +119,42 @@ void opcontrol() {
 	resetpid = true;
 	pros::delay(20);
 
-	pidvalues(-1150, -1150, 5 ,0);
+	pidvalues(-1150, -1150, 5, 0);
 	pros::delay(1200);
 	resetpid = true;
 	pros::delay(20);
 
 	catamode = true;
-	pros::delay(20);
+	pros::delay(21);
 }
 
-//std::string prevGuessPos;
+// std::string prevGuessPos;
 
-void printer() {
+void printer()
+{
 	using namespace pros;
-	//print formats
-	//std::string string_name = std::to_string(rf_wheel.get_position());
-	//lcd::set_text(1,print1 + "   " + print2 + "   " + print3);
-	//printf("X: %f           Y: %f           Theta: %f              Position Guess: %s", pX, pY, pTheta, nguessPos);
-	//std::cout << rightwheel << "   " << leftwheel << std::endl;
-	Motor lf_wheel (1);
-	Motor rf_wheel (9); 
-	pros::ADIEncoder quadL ('E', 'F');
-  	pros::ADIEncoder quadR ('G', 'H');
-	while(1) {
-        std::string pX = std::to_string(X);
-        std::string pY = std::to_string(Y);
+	// print formats
+	// std::string string_name = std::to_string(rf_wheel.get_position());
+	// lcd::set_text(1,print1 + "   " + print2 + "   " + print3);
+	// printf("X: %f           Y: %f           Theta: %f              Position Guess: %s", pX, pY, pTheta, nguessPos);
+	// std::cout << rightwheel << "   " << leftwheel << std::endl;
+	Motor lf_wheel(1);
+	Motor rf_wheel(9);
+	pros::ADIEncoder quadL('E', 'F');
+	pros::ADIEncoder quadR('G', 'H');
+	while (1)
+	{
+		std::string pX = std::to_string(X);
+		std::string pY = std::to_string(Y);
 		std::string pTheta = std::to_string(theta / torad);
 		std::string leftquadval = std::to_string(quadL.get_value());
 		std::string rightquadval = std::to_string(quadR.get_value());
 
 		//printf("pid:%f  Theta: %f      targettheta: %f    errortheta: %f    turnmode: %d total: %f  der: %f\n",\
 		// (-80 * errortheta) + (0.001 * totalthetaerr) + (20 * (errortheta - prevthetaerr)), theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr, ((errortheta - prevthetaerr)/torad));
-		
+
 		delay(100);
 	}
-	printf("Hello World.");
 }
 
 /*
