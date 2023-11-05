@@ -15,7 +15,7 @@ extern double errorX, errorY, errortheta;
 extern double errdisp, preverrdisp, totalerr;
 extern double powerL, powerR;
 extern double targPowerL, targPowerR;
-extern double kP, kD , kI;
+extern double kP, kD, kI;
 
 extern double pi;
 extern double halfpi;
@@ -37,36 +37,39 @@ extern double prevthetaerr = 0;
 double prevErrorX, prevErrorY;
 double targLeft, targRight;
 
-
-//input x and y values then robot turn to that position first before moving in a straight line
-int Control(){
+// input x and y values then robot turn to that position first before moving in a straight line
+int Control()
+{
   using namespace pros;
   Motor lf_base(lf_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-	Motor lt_base(lt_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-	Motor lb_base(lb_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-	Motor rf_base(rf_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-	Motor rt_base(rt_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-	Motor rb_base(rb_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+  Motor lt_base(lt_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+  Motor lb_base(lb_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+  Motor rf_base(rf_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+  Motor rt_base(rt_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+  Motor rb_base(rb_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
 
-  //Motor lf_wheel (lf_port);
-  //Motor rf_wheel (rf_port);
-  while(true){
-    //constantly check if robot needs to turn or move
-    //rotate if turnmode=true
-    if (turnmode){
-      //runs until within range of +-1 degrees of target theta
-      while (fabs(theta/torad - targettheta/torad) > 1){
+  // Motor lf_wheel (lf_port);
+  // Motor rf_wheel (rf_port);
+  while (true)
+  {
+    // constantly check if robot needs to turn or move
+    // rotate if turnmode=true
+    if (turnmode)
+    {
+      // runs until within range of +-1 degrees of target theta
+      while (fabs(theta / torad - targettheta / torad) > 1)
+      {
         errortheta = targettheta - theta;
         totalthetaerr += errortheta;
 
         double turnder = errortheta - prevthetaerr;
-        double turnvoltage = (double) -75 * errortheta + (double) 0.001 * totalthetaerr + (double) 2500 * turnder;
-     
-        lf_base.move(turnvoltage);
-        rf_base.move(turnvoltage);		
+        double turnvoltage = (double)-75 * errortheta + (double)0.001 * totalthetaerr + (double)2500 * turnder;
 
-        printf("turnPID:%f  theta: %f    targettheta: %f    errortheta: %f    turnmode: %d   totalerr: %f    der: %f\n",\
-		    turnvoltage, theta/torad, targettheta/torad, errortheta/torad, turnmode, totalthetaerr, turnder/torad);
+        lf_base.move(turnvoltage);
+        rf_base.move(turnvoltage);
+
+        printf("turnPID:%f  theta: %f    targettheta: %f    errortheta: %f    turnmode: %d   totalerr: %f    der: %f\n",
+               turnvoltage, theta / torad, targettheta / torad, errortheta / torad, turnmode, totalthetaerr, turnder / torad);
 
         prevthetaerr = errortheta;
 
@@ -80,14 +83,14 @@ int Control(){
       rf_base.brake();
       pros::delay(2);
     }
-    //double prevErrorLeft, prevErrorRight;
-    //moves if drivemode=true
-    // if (drivemode){
-    //   //runs until errorX and errorY are +-0.2cm
-    //   while (true){
-    //     kP = 1;
-    //     double errorLeft = targLeft - encdL;
-    //     double errorRight = targRight - encdR;
+    // double prevErrorLeft, prevErrorRight;
+    // moves if drivemode=true
+    //  if (drivemode){
+    //    //runs until errorX and errorY are +-0.2cm
+    //    while (true){
+    //      kP = 1;
+    //      double errorLeft = targLeft - encdL;
+    //      double errorRight = targRight - encdR;
 
     //     double deltaErrorLeft = errorLeft - prevErrorLeft;
     //     double deltaErrorRight = errorRight - prevErrorRight;
@@ -105,7 +108,7 @@ int Control(){
 
     //     errorX = targetX - X;
     //     errorY = targetY - Y;
-    //     if(errorX == 0){errorX += 0.001;} 
+    //     if(errorX == 0){errorX += 0.001;}
     //     double arcTan = errorY/errorX;
     //     fabs(targettheta = atan(arcTan));
     //     errortheta = targettheta - theta;
@@ -129,7 +132,7 @@ int Control(){
 
     //     double der = errdisp - preverrdisp;
     //     double voltage = 5 * errdisp + kD * der;
-        
+
     //     printf("x:%f  y:%f Theta: %f errdisp: %f \n",\
 		//     X, Y, theta/torad, errdisp);
 
@@ -139,7 +142,7 @@ int Control(){
 
     //     //assign previous error for kD
     //     preverrdisp = errdisp;
-         
+
     //     pros::delay(2);
     //   }
     //   //reset ID values after reaching
@@ -149,12 +152,13 @@ int Control(){
     //     preverrdisp = 0;
     //   }
     // }
-     pros::delay(2);
+    pros::delay(2);
   }
 }
 
-//function to set target X and Y values
-void movecoords(double left, double right){
+// function to set target X and Y values
+void movecoords(double left, double right)
+{
   targLeft = left;
   targRight = right;
   // errorX = targetX - X;
@@ -163,11 +167,10 @@ void movecoords(double left, double right){
   drivemode = true;
 }
 
-//function to rotate robot about a fixed point
-void rotateto(double degrees){
+// function to rotate robot about a fixed point
+void rotateto(double degrees)
+{
   targettheta = degrees * torad;
   errortheta = targettheta - theta;
   turnmode = true;
 }
-
-
