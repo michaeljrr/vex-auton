@@ -20,16 +20,23 @@ double dcenter = 0;
 
 int Odometry(){
   using namespace pros;
-  Motor lf_wheel (lf_port);
-  Motor rf_wheel (rf_port);
+  //Motor lf_wheel (lf_port);
+  //Motor rf_wheel (rf_port);
+  Motor lf_base(lf_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+	Motor lt_base(lt_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+	Motor lb_base(lb_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+	Motor rf_base(rf_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+	Motor rt_base(rt_port, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+	Motor rb_base(rb_port, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+
   pros::ADIEncoder quadL ('C', 'D');
   pros::ADIEncoder quadR ('G', 'H');
   
   while (true){
     //get encoder units
     //get.position() -> 2.5 units per degree
-    encdL = lf_wheel.get_position();
-    encdR = rf_wheel.get_position();
+    encdL = lf_base.get_position();
+    encdR = rf_base.get_position();
 
     //resets coords if true
     if (resetcoords){
@@ -60,8 +67,8 @@ int Odometry(){
       }
     }
     //resets motor encoder values
-    lf_wheel.tare_position();
-    rf_wheel.tare_position();
+    lf_base.tare_position();
+    rf_base.tare_position();
 
     delay(50);
   }

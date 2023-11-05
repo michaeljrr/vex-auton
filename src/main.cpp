@@ -18,6 +18,9 @@ extern bool drivemode;
 extern bool stationary;
 extern double totalthetaerr;
 extern double prevthetaerr;
+extern bool resetpid = false;
+extern bool rollermode = false;
+extern bool catamode = false;
 
 /**
  * A callback function for LLEMU's center button.
@@ -91,11 +94,38 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pidvalues(2100, 2100);
+	pidvalues(950, 950, 5.2, 0);
+	pros::delay(1200);
+	resetpid = true;
+	pros::delay(20);
 
+	pidvalues(-268, 268, 5, 0);
+	pros::delay(1000);
+	resetpid = true;
+	pros::delay(20);
+
+	pidvalues(1650, 1650, 5, 0);
+	rollermode = true;
+	pros::delay(1200);
+	resetpid = true;
+	pros::delay(20);
+
+	pidvalues(500, -500, 5, 0);
+	rollermode = false;
+	pros::delay(1000);
+	resetpid = true;
+	pros::delay(20);
+
+	pidvalues(-1150, -1150, 5 ,0);
+	pros::delay(1200);
+	resetpid = true;
+	pros::delay(20);
+
+	catamode = true;
+	pros::delay(20);
 }
 
-std::string prevGuessPos;
+//std::string prevGuessPos;
 
 void printer() {
 	using namespace pros;

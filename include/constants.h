@@ -10,15 +10,21 @@
 #define rb_port 18
 #define imu_port 9
 
+
 //flipper
-#define fs_port 9
-#define fr_port 8
-#define flipperrot_port 16
+#define fs_port 5
+#define fr_port 4
+#define flipperrot_port 15
 
 //cata
-#define lc_port 3
-#define rc_port 14
-#define catarot_port 18
+#define lc_port 7
+#define rc_port 17
+#define catarot_port 12
+
+//side rollers
+#define lr_port 2
+#define rr_port 11
+
 
 #define DEFAULT_KP 0.17
 #define DEFAULT_KI 0
